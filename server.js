@@ -4,6 +4,47 @@ const { syncAndSeed, SkiResorts } = require('./db');
 const express = require('express');
 const app = express();
 
+// Add a GET API route
+app.get('/api/ski_resorts', async(req, res, next) => {
+    try {
+        const resorts = await SkiResorts.findAll();
+        res.send(resorts);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// Add GET API individual item route
+app.get('/api/ski_resorts/:id', async(req, res, next) => {
+    try {
+        const resort = await SkiResorts.findByPk(req.params.id);
+        res.send(resort);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// Add POST route
+app.post('/api/ski_resorts', async(req, res, next) => {
+    try {
+        const randomResort = await SkiResorts.create({
+            name: "test",
+            location: "test",
+            hours: "unknown",
+            ticket: "unknown",
+            lesson: "unknown",
+            website: "unknown"
+        })
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+
 // DataBase initialization and seeding the data
 const init = async() => {
     try {

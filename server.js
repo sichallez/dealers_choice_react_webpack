@@ -26,6 +26,14 @@ app.get('/api/ski_resorts/:id', async(req, res, next) => {
     }
 });
 
+// Require the path module
+const path = require('path');
+// Add a static route for webpack generated file ./dist/main.js
+app.use('/dist', express.static(path.join(__dirname, '/dist')));
+
+// Add GET / route to return index.html
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
 // Add POST route
 app.post('/api/ski_resorts', async(req, res, next) => {
     try {

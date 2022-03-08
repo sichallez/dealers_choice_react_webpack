@@ -9,6 +9,7 @@ class Main extends React.Component {
             resorts: []
         };
         this.removeItem = this.removeItem.bind(this);
+        this.insertItem = this.insertItem.bind(this);
     };
 
     async componentDidMount() {
@@ -33,11 +34,41 @@ class Main extends React.Component {
         });
     }
 
+    async insertItem() {
+        // console.log('inserted!!');
+        try {
+            const response = await axios.post('/api/ski_resorts');
+            const newResort = response.data;
+            // console.log(response.data);
+            const resorts = [...this.state.resorts, newResort];
+            this.setState({ 
+                resorts
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
     render() {
         return (
             <div>
                 <h1>Ski Resort Destinations</h1>
-                { /* <form onClick>Register New Ski Destination</button> */}
+                { /* Using a <form> component in React to POST data is not working like a normal html form
+                   * need to read more React form documentation in order to fix those bugs! */ }
+                <form action='/api/ski_resorts' method='POST'>
+                { /* <form onSubmit={ this.insertItem }> */ }
+                    <p>Register New Ski Destination</p>
+                    Resort Name: <input type='text' name='name' />
+                    Location: <input type='text' name='location' />
+                    Website: <input type='text' name='website' /><br />
+                    Hours of Operation: <br /> <textarea row='5' cols='50' name='hours' /><br />
+                    Pass/Ticket: <br /> <textarea row='5' cols='50' name='ticket' /><br />
+                    Lesson: <br /> <textarea row='5' cols='50' name='lesson' /><br />
+                    { /* <input type='submit' name='submit' value='Create' onClick={ this.insertItem } /> */ }
+                    <button onClick={ this.insertItem }>Create</button>
+                    { /* <button type='submit'>Create</button>  */ }
+                </form>
                 <table>
                     <tr>
                         <th>Resort</th>

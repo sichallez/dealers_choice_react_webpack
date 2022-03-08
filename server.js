@@ -30,6 +30,8 @@ app.get('/api/ski_resorts/:id', async(req, res, next) => {
 const path = require('path');
 // Add a static route for webpack generated file ./dist/main.js
 app.use('/dist', express.static(path.join(__dirname, '/dist')));
+// Use urlencoded middleware to parse the posted <form> data to js object data, which is available as req.body
+app.use(express.urlencoded({ force: true }));
 
 // Add GET / route to return index.html
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
@@ -37,21 +39,42 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 // Add POST route
 app.post('/api/ski_resorts', async(req, res, next) => {
     try {
-        const randomResort = await SkiResorts.create({
+        // Create a random new item using "curl localhost:3000/api/ski_resorts/ -X POST" in terminal
+        /* const randomResort = await SkiResorts.create({
             name: "test",
             location: "test",
             hours: "unknown",
             ticket: "unknown",
             lesson: "unknown",
             website: "unknown"
+        }) */
+
+        // Create an new item using html <form>
+        // console.log(req.body);
+        const { name, location, website, hours, ticket, lesson } = req.body;
+        const newResort = await SkiResorts.create({
+            name, location, website, hours, ticket, lesson
         })
+        // res.redirect(`/api/ski_resorts/${newResort.id}`);
+        // res.redirect('/');
+        res.status(201).send(newResort);
     }
     catch (err) {
         next(err);
     }
 });
 
-
+// Add Delete route
+app.delete('/api/ski_resorts/:id', async(req, res, next) => {
+    try {
+        const resort = await SkiResorts.findByPk(req.params.id);
+        await resort.destroy();
+        res.sendStatus(204);
+    }
+    catch (err) {
+        next(err);
+    }
+});
 
 // DataBase initialization and seeding the data
 const init = async() => {
